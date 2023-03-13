@@ -1,18 +1,22 @@
-package com.example.chatchit;
+package com.example.chatchit.message;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 
+import com.example.chatchit.R;
+import com.example.chatchit.login_signup.LoginSignup;
+import com.example.chatchit.message.Message;
+import com.example.chatchit.message.MessageAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,7 +35,7 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
-    RecyclerViewAdapter adapter;
+    MessageAdapter adapter;
     RecyclerView recyclerView;
     ArrayList<Message> Messages;
     FirebaseAuth ath;
@@ -48,12 +52,17 @@ public class MainActivity extends AppCompatActivity {
         send = findViewById(R.id.send_icon);
         inputMessage = findViewById(R.id.inputMessage);
         recyclerView = findViewById(R.id.recyclerview);
+
         Messages = new ArrayList<Message>();
         db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
         ath = FirebaseAuth.getInstance();
         user = ath.getCurrentUser();
-        String uId = user.getUid();
-        String uEmail = user.getEmail();
+
+        Intent intent = getIntent();
+        String receiverId = intent.getStringExtra("receiverId");
+        String senderId = ath.getCurrentUser().getUid();
+
+        String uName = user.getDisplayName();
         String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
 
         /*
@@ -63,11 +72,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String msg = inputMessage.getEditText().getText().toString();
-                String datetime = "18/2/2023 9:00";
-                /* Tạo path có tên Messages trên Firebase
-                *  Lưu trữ đối tượng Message
-                * */
-                db.child("Messages").push().setValue(new Message(uEmail, msg, timeStamp)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                // Lưu tin nhắn trong firebase, child là "Messages"
+                // và reset lại phần nhập tin nhắn
+                db.child("Messages").push().setValue(new Message(uName, msg, timeStamp, senderId, receiverId)).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         inputMessage.getEditText().setText("");
@@ -75,10 +82,18 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-        adapter = new RecyclerViewAdapter(this, Messages);
+        adapter = new MessageAdapter(Messages, MainActivity.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return  true;
     }
 
     @Override
@@ -88,26 +103,38 @@ public class MainActivity extends AppCompatActivity {
     }
     /*
     * Lấy dữ liệu từ máy chủ và cập nhật các mục nhận được khi người dùng
-    * cuộn danh sách
+    * cuộn danh sách.
+    * Cập nhật tin nhắn trong recyclerview.
     * */
     private void receiveMessages(){
+        Intent intent = getIntent();
+        String senderId = ath.getCurrentUser().getUid();
+        String receiverId = intent.getStringExtra("receiverId");
+
         db.child("Messages").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Messages.clear();
+                // Đi qua từng child trong firebase
+                // để lấy dữ liệu
                 for(DataSnapshot snap:snapshot.getChildren()){
                     Message message = snap.getValue(Message.class);
-                    Messages.add(message);
-                    adapter.notifyDataSetChanged();
+                    // Chỉ hiện thi tin nhắn giữa 2 người.
+                    // Nếu không có điều kiện thì mọi người sẽ thấy
+                    // tất cả tin nhắn của nhau.
+                    if((senderId.equals(message.getSenderId()) && receiverId.equals(message.getReceiverId())) ||
+                        (senderId.equals(message.getReceiverId()) && receiverId.equals(message.getSenderId()))) {
+                        Messages.add(message);
+                    }
                 }
+                adapter.notifyDataSetChanged();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
-    //Menu
+    //Menu logout
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

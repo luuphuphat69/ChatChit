@@ -1,15 +1,17 @@
-package com.example.chatchit;
+package com.example.chatchit.user;
+
+import android.widget.ImageView;
 
 public class User {
     private String userId, userName, userEmail, userPassword;
-
     public User(String userId, String userName, String userEmail, String userPassword) {
         this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
         this.userPassword = userPassword;
     }
-
+    public User(){
+    }
     public String getUserId() {
         return userId;
     }
@@ -41,4 +43,5 @@ public class User {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
+
 }

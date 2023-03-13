@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".message.MainActivity">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
         app:layout_constraintEnd_toStartOf="@+id/send_icon"
         android:layout_marginBottom="10dp"
         app:boxBackgroundMode="outline"
-        android:hint="Enter message">
+        android:hint="Nhập tin nhắn...">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
