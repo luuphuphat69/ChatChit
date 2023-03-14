@@ -1,13 +1,9 @@
-package com.example.chatchit.fragment;
+package com.example.chatchit.fragment.accountsetting;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-
-import java.util.ArrayList;
 
 public class AccountFragmentAdapter extends FragmentStateAdapter {
 
@@ -22,7 +18,7 @@ public class AccountFragmentAdapter extends FragmentStateAdapter {
             case 1:
                 return new WishlistFragment();
             default:
-                return new AccountFragment();
+                return new MyAccountFragment();
         }
     }
     @Override

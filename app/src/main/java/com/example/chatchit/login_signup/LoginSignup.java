@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.chatchit.R;
-import com.example.chatchit.user.UserListActivity;
+import com.example.chatchit.main.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -58,7 +58,7 @@ public class LoginSignup extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
-                            startActivity(new Intent(LoginSignup.this, UserListActivity.class));
+                            startActivity(new Intent(LoginSignup.this, MainActivity.class));
                         } else{
                             Toast.makeText(LoginSignup.this, "Đăng nhập thất bại", Toast.LENGTH_LONG).show();
                         }
@@ -76,7 +76,7 @@ public class LoginSignup extends AppCompatActivity {
         super.onStart();
         FirebaseUser user = auth.getCurrentUser();
         if(user != null){
-            startActivity(new Intent(this, UserListActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         }
     }

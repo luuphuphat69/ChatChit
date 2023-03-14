@@ -1,4 +1,4 @@
-package com.example.chatchit.user;
+package com.example.chatchit.fragment.user;
 
 import android.widget.ImageView;
 

@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,8 +14,6 @@ import android.view.View;
 
 import com.example.chatchit.R;
 import com.example.chatchit.login_signup.LoginSignup;
-import com.example.chatchit.message.Message;
-import com.example.chatchit.message.MessageAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity {
 
     MessageAdapter adapter;
     RecyclerView recyclerView;
@@ -47,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_message);
 
         send = findViewById(R.id.send_icon);
         inputMessage = findViewById(R.id.inputMessage);
@@ -82,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-        adapter = new MessageAdapter(Messages, MainActivity.this);
+        adapter = new MessageAdapter(Messages, ChatActivity.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
