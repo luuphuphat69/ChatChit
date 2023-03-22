@@ -3,12 +3,13 @@ package com.example.chatchit.fragment.user;
 import android.widget.ImageView;
 
 public class User {
-    private String userId, userName, userEmail, userPassword;
-    public User(String userId, String userName, String userEmail, String userPassword) {
+    private String userId, userName, userEmail, userPassword, userImg;
+    public User(String userId, String userName, String userEmail, String userPassword, String userImg) {
         this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
         this.userPassword = userPassword;
+        this.userImg = userImg;
     }
     public User(){
     }
@@ -44,4 +45,11 @@ public class User {
         this.userPassword = userPassword;
     }
 
+    public String getUserImg() {
+        return userImg;
+    }
+
+    public void setUserImg(String userImg) {
+        this.userImg = userImg;
+    }
 }

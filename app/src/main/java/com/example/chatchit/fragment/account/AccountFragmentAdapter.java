@@ -1,4 +1,4 @@
-package com.example.chatchit.fragment.accountsetting;
+package com.example.chatchit.fragment.account;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -16,7 +16,7 @@ public class AccountFragmentAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 1:
-                return new WishlistFragment();
+                return new OptionsFragment();
             default:
                 return new MyAccountFragment();
         }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,7 +33,6 @@ public class UserFragment extends Fragment implements IOnClickListener {
     RecyclerView userrecyclerView;
     FirebaseAuth ath;
     String currentUser;
-    BottomNavigationView bottomNavigationView;
     private DatabaseReference database;
 
     @Override
@@ -52,16 +52,19 @@ public class UserFragment extends Fragment implements IOnClickListener {
         Users = new ArrayList<User>();
         currentUser = ath.getCurrentUser().getUid();
 
-        userAdapter = new UserAdapter(Users, new IOnClickListener() {
+        userAdapter = new UserAdapter(getContext(), Users, new IOnClickListener() {
             @Override
             public void onClickListener(User user) {
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
                 intent.putExtra("receiverId", user.getUserId());
+
                 startActivity(intent);
             }
         });
 
         userrecyclerView.setAdapter(userAdapter);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        userrecyclerView.addItemDecoration(dividerItemDecoration);
         userrecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
 
         /*
@@ -91,7 +94,6 @@ public class UserFragment extends Fragment implements IOnClickListener {
         });
 
     }
-
     @Override
     public void onClickListener(User user) {
     }

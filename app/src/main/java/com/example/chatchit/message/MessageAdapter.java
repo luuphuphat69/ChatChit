@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,9 +45,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         auth = FirebaseAuth.getInstance();
         String currentUser = auth.getCurrentUser().getUid();
 
-        holder.username.setText(Messages.get(position).getUserName());
-        holder.message.setText(Messages.get(position).getUserMessage());
-        holder.datetime.setText(Messages.get(position).getDatetime());
+        holder.username.setText(message.getUserName());
+        holder.message.setText(message.getUserMessage());
+        holder.datetime.setText(message.getDatetime());
+
         if(message.getSenderId().equals(currentUser)){
             holder.messageRowLayout.setBackgroundColor(context.getResources().getColor(R.color.senderColor));
             holder.message.setTextColor(context.getResources().getColor(R.color.black));
@@ -64,12 +66,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public class MessageViewHolders extends RecyclerView.ViewHolder {
         private TextView username, message, datetime;
         private LinearLayout messageRowLayout;
+        private ImageView userImg;
         public MessageViewHolders(@NonNull View itemView){
             super(itemView);
             username = itemView.findViewById(R.id.username);
             message = itemView.findViewById(R.id.usermessage);
             datetime = itemView.findViewById(R.id.message_datetime);
             messageRowLayout = itemView.findViewById(R.id.messageMain);
+            //userImg = itemView.findViewById(R.id.message_UserImg);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.chatchit.fragment.accountsetting;
+package com.example.chatchit.fragment.account;
 
 import android.os.Bundle;
 
@@ -49,7 +49,7 @@ public class AccountFragment extends Fragment {
                         tab.setText("Tài khoản của tôi");
                         break;
                     case 1:
-                        tab.setText("Danh sách yêu thích");
+                        tab.setText("Tùy chọn");
                         break;
                 }
             }

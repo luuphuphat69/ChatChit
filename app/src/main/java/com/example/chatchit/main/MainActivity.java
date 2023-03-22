@@ -15,7 +15,8 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.chatchit.fragment.accountsetting.AccountFragment;
+import com.example.chatchit.fragment.account.AccountFragment;
+import com.example.chatchit.fragment.setting.SettingFragment;
 import com.example.chatchit.fragment.user.UserFragment;
 import com.example.chatchit.login_signup.LoginSignup;
 import com.example.chatchit.R;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         loadFragment(new UserFragment());
 
         /*
-        * Thanh bottom navigate, chuyển người dùng đến trang khác
+        * Thanh bottom navigate, chuyển người dùng đến fragment khác
         * */
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -60,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new AccountFragment();
                         loadFragment(fragment);
                         return  true;
+                    case R.id.setting:
+                        toolbar.setTitle("Cài đặt");
+                        fragment = new SettingFragment();
+                        loadFragment(fragment);
+                        return true;
                 }
                 return  false;
             }
