@@ -39,7 +39,7 @@ import java.util.UUID;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SignUpActivity extends AppCompatActivity {
-    TextInputLayout signUpEmail, signUpPassword, signUpUsername;
+    TextInputLayout signUpEmail, signUpPassword, signUpUsername, confirmPass;
     Button signup;
     CircleImageView addUserImg;
     FirebaseAuth auth;
@@ -82,6 +82,7 @@ public class SignUpActivity extends AppCompatActivity {
         signUpPassword = findViewById(R.id.signUpPassword);
         signUpUsername = findViewById(R.id.signUpUsername);
         addUserImg = findViewById(R.id.addUserImg);
+        confirmPass = findViewById(R.id.confirmPass);
         auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
 
@@ -101,26 +102,36 @@ public class SignUpActivity extends AppCompatActivity {
                 String Email = signUpEmail.getEditText().getText().toString();
                 String Password = signUpPassword.getEditText().getText().toString();
                 String UserName = signUpUsername.getEditText().getText().toString();
+                String ConfirmPass = confirmPass.getEditText().getText().toString();
 
-                auth.createUserWithEmailAndPassword(Email, Password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            db.child("User").child(auth.getUid()).push().setValue(new User(auth.getUid(), UserName, Email, Password, randomUUID));
+                if(randomUUID == null){
+                    Toast.makeText(SignUpActivity.this, "Chưa chọn ảnh", Toast.LENGTH_LONG).show();
+                    recreate();
+                }
+                if(Password.equals(ConfirmPass) && randomUUID != null){
+                    auth.createUserWithEmailAndPassword(Email, Password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(task.isSuccessful()){
+                                db.child("User").child(auth.getUid()).push().setValue(new User(auth.getUid(), UserName, Email, Password, randomUUID));
 
-                            // Set DisplayName cho user đăng ký
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(UserName).build();
-                            FirebaseUser firebaseUser = auth.getCurrentUser();
-                            firebaseUser.updateProfile(profileUpdates);
+                                // Set DisplayName cho user đăng ký
+                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(UserName).build();
+                                FirebaseUser firebaseUser = auth.getCurrentUser();
+                                firebaseUser.updateProfile(profileUpdates);
 
-                            Toast.makeText(SignUpActivity.this, "Tạo tài khoản thành công", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(SignUpActivity.this, LoginSignup.class));
-                        }else{
-                            Toast.makeText(SignUpActivity.this, "Tạo tài khoản không thành công", Toast.LENGTH_LONG).show();
+                                Toast.makeText(SignUpActivity.this, "Tạo tài khoản thành công", Toast.LENGTH_LONG).show();
+                                startActivity(new Intent(SignUpActivity.this, LoginSignup.class));
+                            }else{
+                                Toast.makeText(SignUpActivity.this, "Tạo tài khoản không thành công", Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }else if(!Password.equals(ConfirmPass) && randomUUID != null){
+                    Toast.makeText(SignUpActivity.this, "Mật khẩu không trùng khớp", Toast.LENGTH_LONG).show();
+                    recreate();
+                }
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

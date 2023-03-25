@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-  <item android:title="Đăng xuất"
-      android:id="@+id/btn_logout"
-      android:icon="@drawable/ic_baseline_logout_24"/>
+  <item android:title="Xóa lịch sử trò chuyện"
+      android:id="@+id/deleteConvo"
+      android:icon="@drawable/ic_baseline_delete_24"/>
 </menu>

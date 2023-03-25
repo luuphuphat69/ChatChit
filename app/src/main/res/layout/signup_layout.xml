@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
     tools:context=".login_signup.LoginSignup">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/chitchatImg"
         android:src="@drawable/chitchat"
-        android:layout_marginBottom="20dp"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="20dp"
+        tools:ignore="MissingConstraints" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:id="@+id/addUserImg"
+        app:layout_constraintTop_toBottomOf="@+id/chitchatImg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
         android:src="@drawable/ic_baseline_add_a_photo_24" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -26,6 +33,9 @@
         android:layout_margin="20dp"
         android:id="@+id/signUpUsername"
         android:hint="NickName"
+        app:layout_constraintTop_toBottomOf="@+id/addUserImg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:boxBackgroundColor="@color/white">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -39,6 +49,9 @@
         android:layout_margin="20dp"
         android:id="@+id/signUpEmail"
         android:hint="Email"
+        app:layout_constraintTop_toBottomOf="@+id/signUpUsername"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:boxBackgroundColor="@color/white">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -53,6 +66,25 @@
         android:hint="Mật khẩu"
         android:layout_margin="20dp"
         app:passwordToggleEnabled="true"
+        app:layout_constraintTop_toBottomOf="@+id/signUpEmail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:boxBackgroundColor="@color/white">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/confirmPass"
+        android:hint="Nhập lại mật khẩu"
+        android:layout_margin="20dp"
+        app:passwordToggleEnabled="true"
+        app:layout_constraintTop_toBottomOf="@+id/signUpPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:boxBackgroundColor="@color/white">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -67,5 +99,8 @@
         android:background="@drawable/roundstyle"
         android:hint="Đăng ký"
         android:fontFamily="sans-serif-black"
+        app:layout_constraintTop_toBottomOf="@+id/confirmPass"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:textSize="17sp" />
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

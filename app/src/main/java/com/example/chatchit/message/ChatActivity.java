@@ -1,13 +1,17 @@
 package com.example.chatchit.message;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -133,22 +137,47 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
     //Menu logout
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.delete_menu, menu);
+        MenuBuilder menuBuilder = (MenuBuilder) menu;
+        menuBuilder.setOptionalIconsVisible(true);
         return true;
     }
+    // Xóa đoạn chat
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = getIntent();
+        String senderId = ath.getCurrentUser().getUid();
+        String receiverId = intent.getStringExtra("receiverId");
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.btn_logout:
-                ath.signOut();
-                startActivity(new Intent(this, LoginSignup.class));
+            case R.id.deleteConvo:
+                db.child("Messages").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        // Đi qua từng child trong firebase
+                        // để lấy dữ liệu.
+                        for(DataSnapshot snap:snapshot.getChildren()){
+                            Message message = snap.getValue(Message.class);
+                            String childKey = snap.getKey();
+                            // Điều kiện để lấy data giữa 2 người
+                            if((senderId.equals(message.getSenderId()) && receiverId.equals(message.getReceiverId())) ||
+                                    (senderId.equals(message.getReceiverId()) && receiverId.equals(message.getSenderId()))) {
+                                db.child("Messages").child(childKey).removeValue();
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d(TAG, error.getMessage());
+                    }
+                });
                 finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-}
+}//internal storeage

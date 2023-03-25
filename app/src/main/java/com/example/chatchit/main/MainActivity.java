@@ -15,26 +15,29 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.chatchit.fragment.account.AccountFragment;
-import com.example.chatchit.fragment.setting.SettingFragment;
+import com.example.chatchit.fragment.account.MyAccountFragment;
+import com.example.chatchit.fragment.setting.SettingPreferenceFragment;
 import com.example.chatchit.fragment.user.UserFragment;
 import com.example.chatchit.login_signup.LoginSignup;
 import com.example.chatchit.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
-    FirebaseAuth ath;
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+    DatabaseReference db = FirebaseDatabase.getInstance().getReference();
     ActionBar toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ath = FirebaseAuth.getInstance();
+       // ath = FirebaseAuth.getInstance();
         bottomNavigationView = findViewById(R.id.bottomNav_main);
 
         toolbar = getSupportActionBar();
@@ -58,12 +61,12 @@ public class MainActivity extends AppCompatActivity {
                         return  true;
                     case R.id.account:
                         toolbar.setTitle("Tài khoản");
-                        fragment = new AccountFragment();
+                        fragment = new MyAccountFragment();
                         loadFragment(fragment);
                         return  true;
                     case R.id.setting:
                         toolbar.setTitle("Cài đặt");
-                        fragment = new SettingFragment();
+                        fragment = new SettingPreferenceFragment();
                         loadFragment(fragment);
                         return true;
                 }
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.logout_menu, menu);
         MenuBuilder menuBuilder = (MenuBuilder) menu;
         menuBuilder.setOptionalIconsVisible(true);
         return true;
@@ -93,11 +96,12 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.btn_logout:
-                ath.signOut();
+                auth.signOut();
                 startActivity(new Intent(this, LoginSignup.class));
                 finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }

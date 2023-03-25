@@ -41,6 +41,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -49,9 +50,7 @@ public class MyAccountFragment extends Fragment {
     ImageView editUsername;
     CircleImageView userImage;
     TextView username, email;
-    DatabaseReference database;
-    FirebaseAuth auth;
-    User user;
+    FirebaseAuth auth = FirebaseAuth.getInstance();
 
     ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
@@ -79,9 +78,6 @@ public class MyAccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        database = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
-        auth = FirebaseAuth.getInstance();
-
         username = view.findViewById(R.id.username);
         email = view.findViewById(R.id.email);
 
@@ -90,31 +86,6 @@ public class MyAccountFragment extends Fragment {
 
         userImage = view.findViewById(R.id.userImage);
         editUsername = view.findViewById(R.id.editUsername);
-
-        /*getUserInfo();
-
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference islandRef = storageReference.child("Profile Images/").child(user.getUserImg());
-        try {
-            File localFile = File.createTempFile("images", "jpg");
-
-            islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    // Local temp file has been created
-                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getPath());
-                    userImage.setImageBitmap(bitmap);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(getContext(), exception.getMessage() + user.getUserImg(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
 
         userImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,30 +106,6 @@ public class MyAccountFragment extends Fragment {
                 intent.putExtra("email", email.getText().toString());
 
                 launcher.launch(intent);
-            }
-        });
-    }
-    public void getUserInfo(){
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        db.child("User").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange( @NonNull DataSnapshot snapshot ) {
-                for(DataSnapshot dataSnapshot: snapshot.getChildren()){
-                    for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                        String uid = dataSnapshot.getKey();
-                        // Chỉ hiện thị người dùng ngoại trừ tài khoản
-                        // đang login.
-                        if(uid.equals(auth.getCurrentUser().getUid())){
-                            user = dataSnapshot1.getValue(User.class);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled( @NonNull DatabaseError error ) {
-
             }
         });
     }

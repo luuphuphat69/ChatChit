@@ -24,6 +24,7 @@
         app:boxBackgroundMode="outline"
         android:hint="Nhập tin nhắn...">
         <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textImeMultiLine"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </com.google.android.material.textfield.TextInputLayout>

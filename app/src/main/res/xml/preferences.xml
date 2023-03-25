@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Cơ bản">
+        <SwitchPreference
+            android:key="switch"
+            android:title="Màn hình tối"
+            android:summary="Bật/ Tắt màn hình tối"
+            android:icon="@drawable/ic_baseline_mode_night_24"
+            android:defaultValue="false"/>
+        <EditTextPreference
+            android:key="text"
+            android:summary="Điều chỉnh độ lớn của chữ"
+            android:icon="@drawable/ic_baseline_format_size_24"
+            android:title="Điều chỉnh phông chữ"
+            android:inputType="number"/>
+    </PreferenceCategory>
+ <PreferenceCategory android:title="Nâng cao">
+        <Preference
+            android:title="Sao lưu"
+            android:summary="Sao lưu tất cả tin nhắn"
+            android:icon="@drawable/ic_baseline_backup_24"
+            android:key="backup"/>
+        <Preference
+            android:title="Khôi phục"
+            android:summary="Khôi phục tất cả tin nhắn đã xóa"
+            android:icon="@drawable/ic_baseline_restore_24"
+            android:key="restore"/>
+ </PreferenceCategory>
+</PreferenceScreen>
