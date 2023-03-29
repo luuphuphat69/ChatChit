@@ -6,15 +6,35 @@ public class Message {
     private String datetime;
     private String senderId;
     private String receiverId;
+    private String contentWebView;
+    private int isShown;
 
-    public Message(String userName, String userMessage, String datetime, String senderId, String receiverId) {
+    public Message(String userName, String userMessage, String datetime, String contentWebView, String senderId, String receiverId, int isShown) {
         this.userName = userName;
         this.userMessage = userMessage;
         this.datetime = datetime;
         this.senderId = senderId;
         this.receiverId = receiverId;
+        this.contentWebView = contentWebView;
+        this.isShown = isShown;
     }
     public Message(){
+    }
+
+    public int getIsShown() {
+        return isShown;
+    }
+
+    public void setIsShown( int isShown ) {
+        this.isShown = isShown;
+    }
+
+    public String getContentWebView() {
+        return contentWebView;
+    }
+
+    public void setContentWebView( String contentWebView ) {
+        this.contentWebView = contentWebView;
     }
 
     public String getReceiverId() {

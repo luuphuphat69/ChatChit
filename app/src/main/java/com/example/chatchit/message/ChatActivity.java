@@ -10,13 +10,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.widget.EditText;
 
+import com.example.chatchit.MyEditText;
 import com.example.chatchit.R;
 import com.example.chatchit.login_signup.LoginSignup;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,16 +38,20 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
 
     MessageAdapter adapter;
     RecyclerView recyclerView;
     ArrayList<Message> Messages;
+    String contentWebview;
     FirebaseAuth ath;
+
     FirebaseUser user;
     DatabaseReference db;
-    TextInputLayout inputMessage;
+    MyEditText inputMessage;
     FloatingActionButton send;
 
     @Override
@@ -54,6 +62,7 @@ public class ChatActivity extends AppCompatActivity {
         send = findViewById(R.id.send_icon);
         inputMessage = findViewById(R.id.inputMessage);
         recyclerView = findViewById(R.id.recyclerview);
+
 
         Messages = new ArrayList<Message>();
         db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
@@ -73,13 +82,18 @@ public class ChatActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String msg = inputMessage.getEditText().getText().toString();
+                String msg = inputMessage.getText().toString();
+                contentWebview = MyEditText.getLink();
                 // Lưu tin nhắn trong firebase, child là "Messages"
                 // và reset lại phần nhập tin nhắn
-                db.child("Messages").push().setValue(new Message(uName, msg, timeStamp, senderId, receiverId)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                db.child("Messages").push().setValue(new Message(uName, msg, timeStamp, contentWebview, senderId, receiverId, 1)).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        inputMessage.getEditText().setText("");
+                        inputMessage.setText("");
+                        // Set lại link URL của contentWebView
+                        // Trách trường hợp khi nhắn tới user khác sẽ hiện
+                        // lại Item đã gửi đến user trước đó.
+                        MyEditText.setLink();
                     }
                 });
             }
@@ -126,7 +140,9 @@ public class ChatActivity extends AppCompatActivity {
                     // tất cả tin nhắn của nhau.
                     if((senderId.equals(message.getSenderId()) && receiverId.equals(message.getReceiverId())) ||
                         (senderId.equals(message.getReceiverId()) && receiverId.equals(message.getSenderId()))) {
-                        Messages.add(message);
+                        if(message.getIsShown() != 0){
+                            Messages.add(message);
+                        }
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -166,7 +182,9 @@ public class ChatActivity extends AppCompatActivity {
                             // Điều kiện để lấy data giữa 2 người
                             if((senderId.equals(message.getSenderId()) && receiverId.equals(message.getReceiverId())) ||
                                     (senderId.equals(message.getReceiverId()) && receiverId.equals(message.getSenderId()))) {
-                                db.child("Messages").child(childKey).removeValue();
+                                if(message.getIsShown() == 0 || message.getIsShown() == 1){
+                                    db.child("Messages").child(childKey).removeValue();
+                                }
                             }
                         }
                     }
@@ -176,6 +194,37 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
                 finish();
+            case R.id.delete:
+                db.child("Messages").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        // Đi qua từng child trong firebase
+                        // để lấy dữ liệu.
+                        for(DataSnapshot snap:snapshot.getChildren()){
+                            Message message = snap.getValue(Message.class);
+                            // Điều kiện để lấy data giữa 2 người
+                            if((senderId.equals(message.getSenderId()) && receiverId.equals(message.getReceiverId())) ||
+                                    (senderId.equals(message.getReceiverId()) && receiverId.equals(message.getSenderId()))) {
+                                if(senderId.equals(message.getSenderId())){
+                                    message.setIsShown(0);
+                                    if(message.getIsShown() == 0){
+                                        // Update giá trị isShown của từng message thành 0
+                                        // 0: Hide
+                                        // 1: Shown
+                                        HashMap<String, Object> taskMap = new HashMap<String, Object>();
+                                        taskMap.put("isShown", 0);
+                                        snap.getRef().updateChildren(taskMap);
+                                        finish();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d(TAG, error.getMessage());
+                    }
+                });
             default:
                 return super.onOptionsItemSelected(item);
         }

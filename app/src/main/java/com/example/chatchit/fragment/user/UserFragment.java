@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -96,5 +99,16 @@ public class UserFragment extends Fragment implements IOnClickListener {
     }
     @Override
     public void onClickListener(User user) {
+    }
+
+    @Override
+    public void onCreateOptionsMenu( @NonNull Menu menu, @NonNull MenuInflater inflater ) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.logout_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected( @NonNull MenuItem item ) {
+        return super.onOptionsItemSelected(item);
     }
 }

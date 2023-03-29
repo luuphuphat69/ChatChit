@@ -13,27 +13,24 @@
         app:layout_constraintTop_toTopOf="parent">
     </androidx.recyclerview.widget.RecyclerView>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputMessage"
+    <com.example.chatchit.MyEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/inputMessage"
+        android:inputType="textImeMultiLine"
         app:layout_constraintEnd_toStartOf="@+id/send_icon"
         android:layout_marginBottom="10dp"
         app:boxBackgroundMode="outline"
-        android:hint="Nhập tin nhắn...">
-        <com.google.android.material.textfield.TextInputEditText
-            android:inputType="textImeMultiLine"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.google.android.material.textfield.TextInputLayout>
+        android:hint="Nhập tin nhắn..."/>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/send_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_send_24"
-        app:layout_constraintEnd_toEndOf="@+id/inputMessage"
-        app:layout_constraintBottom_toBottomOf="@+id/inputMessage"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:id="@+id/send_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_send_24"
+            app:layout_constraintEnd_toEndOf="@+id/inputMessage"
+            app:layout_constraintBottom_toBottomOf="@+id/inputMessage"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
