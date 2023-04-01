@@ -1,16 +1,15 @@
 package com.example.chatchit.fragment.setting;
-
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -23,11 +22,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.HashMap;
 
 public class SettingPreferenceFragment extends PreferenceFragmentCompat{
     DatabaseReference db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
     FirebaseAuth auth = FirebaseAuth.getInstance();
+    String backUpMess;
     boolean nightMODE;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -38,6 +40,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
         Preference backUp = getPreferenceManager().findPreference("backup");
         Preference restore = getPreferenceManager().findPreference("restore");
         Preference switcher = getPreferenceManager().findPreference("switch");
+        Preference button = getPreferenceManager().findPreference("button");
 
         sharedPreferences = getContext().getSharedPreferences("MODE", Context.MODE_PRIVATE);
         nightMODE = sharedPreferences.getBoolean("night", false);
@@ -46,7 +49,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
         switcher.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                if (nightMODE == true){
+                if (nightMODE){
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     editor = sharedPreferences.edit();
                     editor.putBoolean("night",false);
@@ -60,10 +63,32 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
                 return false;
             }
         });
-
+        // Lưu trữ dữ liệu vào trong máy bằng Internal Storage
         backUp.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
-            public boolean onPreferenceClick(@NonNull Preference preference) {
+            public boolean onPreferenceClick( @NonNull Preference preference ) {
+                String senderId = auth.getCurrentUser().getUid();
+                db.child("Messages").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange( @NonNull DataSnapshot snapshot ) {
+                        for(DataSnapshot snap:snapshot.getChildren()){
+                            Message message = snap.getValue(Message.class);
+                            if(senderId.equals(message.getSenderId()) || senderId.equals(message.getReceiverId())){
+                                if(message.getIsShown() == 0 || message.getIsShown() == 1){
+                                    backUpMess +=   " message: " + message.getUserMessage() + " content: " + message.getContentWebView()
+                                                  + " sender: " + senderId + " receiver: " + message.getReceiverId()
+                                                  + " time: " + message.getDatetime() + "\n";
+                                    writeFileOnInternalStorage(getContext(), "backup", backUpMess);
+                                }
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled( @NonNull DatabaseError error ) {
+                        Log.d(getTag(), error.getMessage());
+                    }
+                });
+                Toast.makeText(getContext(), "Back up success", Toast.LENGTH_LONG).show();
                 return false;
             }
         });
@@ -76,7 +101,17 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
                 return  true;
             }
         });
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick( @NonNull Preference preference ) {
+
+                return false;
+            }
+        });
     }
+    /* Kiểm tra từng đoạn chat, nếu senderId của Message = current user ID
+    *  và giá trị isShown = 0 thì set lại isShown = 1
+    */
     public void checkMessage(){
         String senderId = auth.getCurrentUser().getUid();
         db.child("Messages").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
@@ -86,7 +121,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
                    Message message = snap.getValue(Message.class);
                     if(senderId.equals(message.getSenderId())){
                         if(message.getIsShown() == 0){
-                            // Update giá trị isShown của từng message thành 0
+                            // Update giá trị isShown của từng message thành 1
                             // 0: Hide
                             // 1: Shown
                             HashMap<String, Object> taskMap = new HashMap<String, Object>();
@@ -101,5 +136,22 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
                 Log.d(getTag(), error.getMessage());
             }
         });
+    }
+    // Đẩy file vào internal storage
+    public void writeFileOnInternalStorage(Context mcoContext, String sFileName, String sBody){
+        File dir = new File(mcoContext.getFilesDir(), "messagesbackup");
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+
+        try {
+            File gpxfile = new File(dir, sFileName);
+            FileWriter writer = new FileWriter(gpxfile);
+            writer.append(sBody);
+            writer.flush();
+            writer.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

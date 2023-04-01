@@ -36,12 +36,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditInfoActivity extends AppCompatActivity {
     TextInputEditText editUsername, useremail;
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+    DatabaseReference db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
     CircleImageView userImg;
     Button saveChanges;
 
@@ -70,9 +73,34 @@ public class EditInfoActivity extends AppCompatActivity {
                 String username = editUsername.getText().toString();
                 Intent intentCallBack = getIntent();
                 intentCallBack.putExtra("name", username);
+                changeNameInDb(username);
 
                 setResult(RESULT_OK, intentCallBack);
                 finish();
+            }
+        });
+    }
+    // Thay đổi user name trong database
+    public void changeNameInDb(String displayName){
+        String currentUser = auth.getCurrentUser().getUid();
+        db.child("User").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange( @NonNull DataSnapshot snapshot ) {
+                for(DataSnapshot snap: snapshot.getChildren()){
+                    for(DataSnapshot dataSnapshot1: snap.getChildren()){
+                        String uid = snap.getKey();
+                        // Chỉ hiện thị người dùng ngoại trừ tài khoản
+                        // đang login.
+                        if(uid.equals(currentUser)){
+                            HashMap<String, Object> taskMap = new HashMap<String, Object>();
+                            taskMap.put("userName", displayName);
+                            dataSnapshot1.getRef().updateChildren(taskMap);
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled( @NonNull DatabaseError error ) {
             }
         });
     }

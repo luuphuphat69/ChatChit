@@ -3,6 +3,9 @@ package com.example.chatchit.login_signup;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,7 +42,7 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity{
     TextInputLayout signUpEmail, signUpPassword, signUpUsername, confirmPass;
     Button signup;
     CircleImageView addUserImg;
@@ -83,6 +87,7 @@ public class SignUpActivity extends AppCompatActivity {
         signUpUsername = findViewById(R.id.signUpUsername);
         addUserImg = findViewById(R.id.addUserImg);
         confirmPass = findViewById(R.id.confirmPass);
+
         auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
 

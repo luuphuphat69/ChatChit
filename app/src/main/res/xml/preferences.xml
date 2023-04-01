@@ -26,4 +26,6 @@
             android:icon="@drawable/ic_baseline_restore_24"
             android:key="restore"/>
  </PreferenceCategory>
+    <Preference android:title="Button"
+                android:key="button" />
 </PreferenceScreen>
