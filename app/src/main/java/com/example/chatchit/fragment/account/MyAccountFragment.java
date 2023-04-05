@@ -50,6 +50,7 @@ public class MyAccountFragment extends Fragment {
     ImageView editUsername;
     CircleImageView userImage;
     TextView username, email;
+    DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
     ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

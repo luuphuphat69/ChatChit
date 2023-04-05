@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.chatchit.IOnClickListener;
 import com.example.chatchit.R;
@@ -36,6 +38,8 @@ public class UserFragment extends Fragment implements IOnClickListener {
     RecyclerView userrecyclerView;
     FirebaseAuth ath;
     String currentUser;
+    ImageView sortByAlphabet;
+    int click = 0;
     private DatabaseReference database;
 
     @Override
@@ -55,6 +59,8 @@ public class UserFragment extends Fragment implements IOnClickListener {
         Users = new ArrayList<User>();
         currentUser = ath.getCurrentUser().getUid();
 
+        sortByAlphabet = view.findViewById(R.id.sortUserByAlphabet);
+
         userAdapter = new UserAdapter(getContext(), Users, new IOnClickListener() {
             @Override
             public void onClickListener(User user) {
@@ -70,6 +76,17 @@ public class UserFragment extends Fragment implements IOnClickListener {
         userrecyclerView.addItemDecoration(dividerItemDecoration);
         userrecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
 
+        sortByAlphabet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick( View v ) {
+                click ++;
+                if(click % 2 != 0) {
+                    userAdapter.sortUserByAlphabet();
+                }else{
+                    userAdapter.sortUserByAlphabetReverse();
+                }
+            }
+        });
         /*
          * Cập nhật danh sách người dùng ở recyclerview
          * */

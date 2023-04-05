@@ -31,14 +31,15 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> implements IOnClickListener {
-    private ArrayList<User> Users;
+    private static ArrayList<User> Users;
     private IOnClickListener listener;
     Context context;
-
 
     public UserAdapter(Context context, ArrayList<User> users, IOnClickListener listener) {
         Users = users;
@@ -113,5 +114,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onClickListener(User user) {
+    }
+    public void sortUserByAlphabet(){
+        Collections.sort(Users, new Comparator<User>() {
+            @Override
+            public int compare( User o1, User o2 ) {
+                return o1.getUserName().compareTo(o2.getUserName());
+            }
+        });
+        notifyDataSetChanged();
+    }
+    public void sortUserByAlphabetReverse(){
+        Collections.sort(Users, new Comparator<User>() {
+            @Override
+            public int compare( User o1, User o2 ) {
+                return o2.getUserName().compareTo(o1.getUserName());
+            }
+        });
+        notifyDataSetChanged();
     }
 }

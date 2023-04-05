@@ -17,31 +17,57 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.chatchit.fragment.account.MyAccountFragment;
 import com.example.chatchit.fragment.setting.SettingPreferenceFragment;
+import com.example.chatchit.fragment.user.User;
+import com.example.chatchit.fragment.user.UserAdapter;
 import com.example.chatchit.fragment.user.UserFragment;
 import com.example.chatchit.login_signup.LoginSignup;
 import com.example.chatchit.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     FirebaseAuth auth = FirebaseAuth.getInstance();
     DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+    ArrayList<User> Users = new ArrayList<>();
     ActionBar toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       // ath = FirebaseAuth.getInstance();
+        db.child("User").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange( @NonNull DataSnapshot snapshot ) {
+                for(DataSnapshot snapshot1: snapshot.getChildren()){
+                    for(DataSnapshot snapshot2: snapshot.getChildren()){
+                        User user = snapshot2.getValue(User.class);
+                        Users.add(user);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled( @NonNull DatabaseError error ) {
+
+            }
+        });
+
+        // ath = FirebaseAuth.getInstance();
         bottomNavigationView = findViewById(R.id.bottomNav_main);
 
         toolbar = getSupportActionBar();
         toolbar.setTitle("Tin nhắn");
+
 
         // load UserFragment mặc định
         loadFragment(new UserFragment());
@@ -50,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         * Thanh bottom navigate, chuyển người dùng đến fragment khác
         * */
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;

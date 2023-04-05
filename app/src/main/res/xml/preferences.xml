@@ -26,6 +26,6 @@
             android:icon="@drawable/ic_baseline_restore_24"
             android:key="restore"/>
  </PreferenceCategory>
-    <Preference android:title="Button"
+    <Preference android:title="Danh sách thành viên"
                 android:key="button" />
 </PreferenceScreen>

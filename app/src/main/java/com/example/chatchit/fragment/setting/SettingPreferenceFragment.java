@@ -1,7 +1,9 @@
 package com.example.chatchit.fragment.setting;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -104,8 +106,9 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick( @NonNull Preference preference ) {
-
-                return false;
+                Intent intent = new Intent(getActivity(), TeamsActivity.class);
+                startActivity(intent);
+                return true;
             }
         });
     }
@@ -143,7 +146,6 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
         if(!dir.exists()){
             dir.mkdir();
         }
-
         try {
             File gpxfile = new File(dir, sFileName);
             FileWriter writer = new FileWriter(gpxfile);
