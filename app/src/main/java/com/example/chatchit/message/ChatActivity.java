@@ -83,7 +83,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String msg = inputMessage.getText().toString();
-                Message message=null;
+                Message message = null;
                 contentWebview = MyEditText.getLink();
                 if(contentWebview!=null){
                     message = new Message(uName, msg, timeStamp, contentWebview, senderId, receiverId, 1);

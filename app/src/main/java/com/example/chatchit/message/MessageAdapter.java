@@ -86,8 +86,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         String data = message.getContentWebView();
         // Lấy url của kiểu MIME
-        if(data != "null"){
-
+        if(data != "null" && message.getReceiverId() == currentUser){
             // Load data vào WebView
             holder.userContentWebView.getSettings().setJavaScriptEnabled(true);
             holder.userContentWebView.setWebViewClient(new WebViewClient(){
