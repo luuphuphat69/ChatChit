@@ -83,10 +83,15 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String msg = inputMessage.getText().toString();
+                Message message=null;
                 contentWebview = MyEditText.getLink();
-                // Lưu tin nhắn trong firebase, child là "Messages"
-                // và reset lại phần nhập tin nhắn
-                db.child("Messages").push().setValue(new Message(uName, msg, timeStamp, contentWebview, senderId, receiverId, 1)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                if(contentWebview!=null){
+                    message = new Message(uName, msg, timeStamp, contentWebview, senderId, receiverId, 1);
+                }else {
+                    message = new Message(uName, msg, timeStamp, null, senderId, receiverId, 1);
+                }
+
+                db.child("Messages").push().setValue(message).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         inputMessage.setText("");

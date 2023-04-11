@@ -7,12 +7,6 @@
             android:summary="Bật/ Tắt màn hình tối"
             android:icon="@drawable/ic_baseline_mode_night_24"
             android:defaultValue="false"/>
-        <EditTextPreference
-            android:key="text"
-            android:summary="Điều chỉnh độ lớn của chữ"
-            android:icon="@drawable/ic_baseline_format_size_24"
-            android:title="Điều chỉnh phông chữ"
-            android:inputType="number"/>
     </PreferenceCategory>
  <PreferenceCategory android:title="Nâng cao">
         <Preference

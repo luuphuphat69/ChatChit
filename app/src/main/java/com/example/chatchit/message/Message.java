@@ -1,5 +1,7 @@
 package com.example.chatchit.message;
 
+import androidx.annotation.Nullable;
+
 public class Message {
     private String userName;
     private String userMessage;
@@ -9,7 +11,7 @@ public class Message {
     private String contentWebView;
     private int isShown;
 
-    public Message(String userName, String userMessage, String datetime, String contentWebView, String senderId, String receiverId, int isShown) {
+    public Message( String userName, String userMessage, String datetime, String contentWebView, String senderId, String receiverId, int isShown) {
         this.userName = userName;
         this.userMessage = userMessage;
         this.datetime = datetime;

@@ -84,26 +84,31 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.message.setText(message.getUserMessage());
         holder.datetime.setText(message.getDatetime());
 
-        // Lấy url của kiểu MIME
         String data = message.getContentWebView();
-        // Load data vào WebView
-        holder.userContentWebView.getSettings().setJavaScriptEnabled(true);
-        holder.userContentWebView.setWebViewClient(new WebViewClient(){
-            @Override
-            public void onReceivedError( WebView view, int errorCode, String description, String failingUrl ) {
-                super.onReceivedError(view, errorCode, description, failingUrl);
-                Toast.makeText(view.getContext(), description, Toast.LENGTH_SHORT).show();
-            }
+        // Lấy url của kiểu MIME
+        if(data != "null"){
 
-            @Override
-            public void onReceivedError( WebView view, WebResourceRequest request, WebResourceError error ) {
-                super.onReceivedError(view, request, error);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    onReceivedError(view, error.getErrorCode(), error.getDescription().toString(), request.getUrl().toString());
+            // Load data vào WebView
+            holder.userContentWebView.getSettings().setJavaScriptEnabled(true);
+            holder.userContentWebView.setWebViewClient(new WebViewClient(){
+                @Override
+                public void onReceivedError( WebView view, int errorCode, String description, String failingUrl ) {
+                    super.onReceivedError(view, errorCode, description, failingUrl);
+                    Toast.makeText(view.getContext(), description, Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-        holder.userContentWebView.loadUrl(data);
+
+                @Override
+                public void onReceivedError( WebView view, WebResourceRequest request, WebResourceError error ) {
+                    super.onReceivedError(view, request, error);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        onReceivedError(view, error.getErrorCode(), error.getDescription().toString(), request.getUrl().toString());
+                    }
+                }
+            });
+            holder.userContentWebView.loadUrl(data);
+        }else{
+            holder.userContentWebView.setVisibility(View.GONE);
+        }
 
         holder.userContentWebView.setBackgroundColor(Color.TRANSPARENT);
         holder.userContentWebView.getSettings().setLoadWithOverviewMode(true);

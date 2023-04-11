@@ -142,15 +142,20 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
     }
     // Đẩy file vào internal storage
     public void writeFileOnInternalStorage(Context mcoContext, String sFileName, String sBody){
+        // Tham chiếu đến file directory  /data/data/Project_PackageName/files/messagesbackup
         File dir = new File(mcoContext.getFilesDir(), "messagesbackup");
+        // Nếu chưa tồn tại thì tạo file
         if(!dir.exists()){
             dir.mkdir();
         }
         try {
-            File gpxfile = new File(dir, sFileName);
-            FileWriter writer = new FileWriter(gpxfile);
+            File file = new File(dir, sFileName);
+            FileWriter writer = new FileWriter(file);
+            // Thêm nội dung vào cuối file
             writer.append(sBody);
+            // Xoá hết dữ liệu trong buffer của stream writter trước khi load data mới vào
             writer.flush();
+            //Đóng stream writer
             writer.close();
         } catch (Exception e){
             e.printStackTrace();
