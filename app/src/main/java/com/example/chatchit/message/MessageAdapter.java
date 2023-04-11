@@ -86,7 +86,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         String data = message.getContentWebView();
         // Lấy url của kiểu MIME
-        if(data != "null" && message.getReceiverId() == currentUser){
+        if(data == "null"){
+            holder.userContentWebView.setVisibility(View.GONE);
+        }else{
             // Load data vào WebView
             holder.userContentWebView.getSettings().setJavaScriptEnabled(true);
             holder.userContentWebView.setWebViewClient(new WebViewClient(){
@@ -105,8 +107,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 }
             });
             holder.userContentWebView.loadUrl(data);
-        }else{
-            holder.userContentWebView.setVisibility(View.GONE);
         }
 
         holder.userContentWebView.setBackgroundColor(Color.TRANSPARENT);

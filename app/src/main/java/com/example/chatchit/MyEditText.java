@@ -66,6 +66,6 @@ public class MyEditText extends androidx.appcompat.widget.AppCompatEditText {
             return LinkUri;
         }
         public static void setLink(){
-            LinkUri = "null";
+            LinkUri = null;
         }
 }
