@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.chatchit.fragment.account.MyAccountFragment;
 import com.example.chatchit.fragment.setting.SettingPreferenceFragment;
+import com.example.chatchit.fragment.social.SocialFragment;
 import com.example.chatchit.fragment.user.User;
 import com.example.chatchit.fragment.user.UserAdapter;
 import com.example.chatchit.fragment.user.UserFragment;
@@ -94,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.setting:
                         toolbar.setTitle("Cài đặt");
                         fragment = new SettingPreferenceFragment();
+                        loadFragment(fragment);
+                        return true;
+                    case R.id.social:
+                        toolbar.setTitle("MXH");
+                        fragment = new SocialFragment();
                         loadFragment(fragment);
                         return true;
                 }

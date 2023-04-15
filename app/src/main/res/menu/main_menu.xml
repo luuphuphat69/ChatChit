@@ -6,6 +6,9 @@
     <item android:title="Tài khoản"
         android:id="@+id/account"
         android:icon="@drawable/ic_baseline_person_24"/>
+    <item android:title="MXH"
+        android:id="@+id/social"
+        android:icon="@drawable/ic_baseline_people_alt_24"/>
     <item android:title="Cài đặt"
         android:id="@+id/setting"
         android:icon="@drawable/ic_baseline_settings_24"/>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="41dp"
+            android:layout_height="41dp"
+            android:src="@drawable/ic_baseline_person_24"
+            android:id="@+id/userImage"
+            tools:ignore="MissingConstraints" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User"
+                android:textSize="17sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/postDatetime"
+                android:text="11/4/2003 10:05PM"/>
+        </LinearLayout>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/postContent"
+        android:text="Hello, this is my first post"
+        android:textSize="20dp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:visibility="gone"
+        android:id="@+id/postContentImage" />
+
+    <VideoView
+        android:id="@+id/postContentVideo"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/likeBtn"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_baseline_favorite_24"/>
+
+        <TextView
+            android:id="@+id/countLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="0"
+            android:textSize="20dp" />
+    </LinearLayout>
+</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

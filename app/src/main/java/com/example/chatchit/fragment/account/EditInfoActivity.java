@@ -89,8 +89,7 @@ public class EditInfoActivity extends AppCompatActivity {
                 for(DataSnapshot snap: snapshot.getChildren()){
                     for(DataSnapshot dataSnapshot1: snap.getChildren()){
                         String uid = snap.getKey();
-                        // Chỉ hiện thị người dùng ngoại trừ tài khoản
-                        // đang login.
+                        // Chỉ hiện thị tài khoản login
                         if(uid.equals(currentUser)){
                             HashMap<String, Object> taskMap = new HashMap<String, Object>();
                             taskMap.put("userName", displayName);

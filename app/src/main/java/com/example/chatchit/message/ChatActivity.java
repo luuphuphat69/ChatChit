@@ -175,6 +175,7 @@ public class ChatActivity extends AppCompatActivity {
         String receiverId = intent.getStringExtra("receiverId");
         // Handle item selection
         switch (item.getItemId()) {
+            // Xoá vĩnh viễn
             case R.id.deleteConvo:
                 db.child("Messages").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -199,6 +200,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
                 finish();
+                // Xóa tạm
             case R.id.delete:
                 db.child("Messages").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

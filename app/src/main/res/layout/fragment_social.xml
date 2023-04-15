@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.social.SocialFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.example.chatchit.MyEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/postEditText"
+            android:text="Hôm nay bạn thế nào?"
+            android:textColor="@color/material_on_surface_emphasis_medium"
+            android:textSize="20dp"
+            tools:ignore="MissingConstraints" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/postBtn"
+            android:src="@drawable/ic_baseline_send_24"
+            app:layout_constraintEnd_toEndOf="@+id/postEditText"
+            tools:ignore="MissingConstraints" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ImagePicker"
+            android:src="@drawable/ic_baseline_add_a_photo_24"
+            app:layout_constraintTop_toBottomOf="@+id/postEditText"
+            tools:ignore="MissingConstraints" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/VideoPicker"
+            android:src="@drawable/ic_baseline_videocam_24"
+            app:layout_constraintTop_toBottomOf="@+id/postEditText"
+            app:layout_constraintStart_toEndOf="@+id/ImagePicker"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/insertLink"
+            android:src="@drawable/ic_baseline_add_link_24"
+            app:layout_constraintTop_toBottomOf="@+id/postEditText"
+            app:layout_constraintStart_toEndOf="@+id/VideoPicker"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/postRecyclerView"
+            app:layout_constraintTop_toBottomOf="@+id/ImagePicker"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
