@@ -3,19 +3,39 @@ package com.example.chatchit.fragment.social;
 public class Post {
     private String postId, userId;
     private String postContent, postContentImage, postContentVideo, userName, postDate;
+    private String postURLTitle,  postURL;
     private int amountLike;
+
     public Post() {
     }
 
-    public Post( String postId, String postContent, String postContentImage, String postContentVideo, String userName, String userId, String postDate, int amountLike) {
+    public Post( String postId, String postContent, String postContentImage, String postContentVideo, String postURL, String postURLTitle, String userName, String userId, String postDate, int amountLike) {
         this.postId = postId;
         this.postContent = postContent;
         this.userName = userName;
         this.postDate = postDate;
         this.postContentImage = postContentImage;
         this.postContentVideo = postContentVideo;
+        this.postURL = postURL;
+        this.postURLTitle = postURLTitle;
         this.userId = userId;
         this.amountLike = amountLike;
+    }
+
+    public String getPostURLTitle() {
+        return postURLTitle;
+    }
+
+    public void setPostURLTitle( String postURLTitle ) {
+        this.postURLTitle = postURLTitle;
+    }
+
+    public String getPostURL() {
+        return postURL;
+    }
+
+    public void setPostURL( String postURL ) {
+        this.postURL = postURL;
     }
 
     public String getPostContentVideo() {

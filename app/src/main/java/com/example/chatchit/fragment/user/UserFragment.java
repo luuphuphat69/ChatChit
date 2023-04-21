@@ -93,6 +93,7 @@ public class UserFragment extends Fragment implements IOnClickListener {
         database.child("User").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Users.clear();
                 // Đi qua từng lớp của child "User" để lấy dữ liệu.
                 for(DataSnapshot dataSnapshot: snapshot.getChildren()){
                     for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){

@@ -50,7 +50,7 @@ public class MyAccountFragment extends Fragment {
     ImageView editUsername;
     CircleImageView userImage;
     TextView username, email;
-    DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference database = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
     ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

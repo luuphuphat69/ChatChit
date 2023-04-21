@@ -2,12 +2,11 @@ package com.example.chatchit.fragment.social;
 
 import static android.app.Activity.RESULT_OK;
 
-import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -17,24 +16,26 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Toast;
-import android.widget.VideoView;
 
-import com.example.chatchit.InsertLinkDialog;
 import com.example.chatchit.MyEditText;
 import com.example.chatchit.R;
-import com.example.chatchit.login_signup.SignUpActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,13 +50,19 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.UUID;
 
-public class SocialFragment extends Fragment {
+public class SocialFragment extends Fragment{
     ArrayList<Post> listPost = new ArrayList<>();
     DatabaseReference db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
     FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -63,8 +70,16 @@ public class SocialFragment extends Fragment {
     Uri videoUri;
     String photosRandomUUID;
     String videosRandomUUID;
+    String URL;
     RecyclerView recyclerView;
     PostAdapter adapter;
+    WebArticle webArticle;
+
+    MyEditText myEditText;
+    String postId;
+    String content;
+    String username;
+    String postDate;
 
     public static Context context;
 
@@ -130,21 +145,47 @@ public class SocialFragment extends Fragment {
 
         SocialFragment.context = getContext();
 
-        MyEditText myEditText = view.findViewById(R.id.postEditText);
+        myEditText = view.findViewById(R.id.postEditText);
         recyclerView = view.findViewById(R.id.postRecyclerView);
         ImageButton postBtn = view.findViewById(R.id.postBtn);
         ImageButton imagePicker = view.findViewById(R.id.ImagePicker);
         ImageButton videoPicker = view.findViewById(R.id.VideoPicker);
         ImageButton insertLink = view.findViewById(R.id.insertLink);
 
-        InsertLinkDialog insertLinkDialog = new InsertLinkDialog();
+        // Inflate popup window
         insertLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick( View v ) {
-                insertLinkDialog.show(getParentFragmentManager(), "game");
+                View popupView = LayoutInflater.from(getContext()).inflate(R.layout.insert_link_window, null);
+                int width = LinearLayout.LayoutParams.MATCH_PARENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+                Button submitLink = popupView.findViewById(R.id.submitLink);
+
+                submitLink.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick( View v ) {
+                        popupWindow.setContentView(LayoutInflater.from(getContext()).inflate(R.layout.insert_link_window, null, false));
+                        final EditText insertLinkEditText = popupView.findViewById(R.id.insertLink);
+                        URL = insertLinkEditText.getText().toString();
+                      //  myEditText.setText(URL);
+                        Toast.makeText(getContext(), "Đã lấy link", Toast.LENGTH_LONG).show();
+                        popupWindow.dismiss();
+                    }
+                });
+                popupWindow.showAtLocation(view, Gravity.NO_GRAVITY, 0, 0);
+                // Click bên ngoài cửa sổ, cửa sổ sẽ đóng lại
+                popupView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        popupWindow.dismiss();
+                        return true;
+                    }
+                });
             }
         });
-        String link = insertLinkDialog.getInput();
+
         imagePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick( View v ) {
@@ -167,12 +208,12 @@ public class SocialFragment extends Fragment {
         postBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick( View v ) {
-                String postId = String.valueOf(UUID.randomUUID());
-                String content = myEditText.getText().toString();
-                String username = auth.getCurrentUser().getDisplayName();
-                String postDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
-                if(photosRandomUUID == null && videosRandomUUID == null){
-                    db.child("Social").child("Post").push().setValue(new Post(postId, content, null, null, username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                postId = String.valueOf(UUID.randomUUID());
+                content  = myEditText.getText().toString();
+                username = auth.getCurrentUser().getDisplayName();
+                postDate  = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
+                if(photosRandomUUID == null && videosRandomUUID == null && URL == null){
+                    db.child("Social").child("Post").push().setValue(new Post(postId, content, null, null, null,null, username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete( @NonNull Task<Void> task ) {
                             myEditText.setText("");
@@ -180,7 +221,7 @@ public class SocialFragment extends Fragment {
                         }
                     });
                 }else if(photosRandomUUID != null){
-                    db.child("Social").child("Post").push().setValue(new Post(postId, content, photosRandomUUID, null, username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    db.child("Social").child("Post").push().setValue(new Post(postId, content, photosRandomUUID, null, null, null, username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete( @NonNull Task<Void> task ) {
                             myEditText.setText("");
@@ -189,7 +230,7 @@ public class SocialFragment extends Fragment {
                         }
                     });
                 }else if(videosRandomUUID != null){
-                    db.child("Social").child("Post").push().setValue(new Post(postId, content, null, videosRandomUUID, username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    db.child("Social").child("Post").push().setValue(new Post(postId, content, null, videosRandomUUID,null, null, username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete( @NonNull Task<Void> task ) {
                             myEditText.setText("");
@@ -197,11 +238,13 @@ public class SocialFragment extends Fragment {
                             MyEditText.setLink();
                         }
                     });
+                }else if(URL != null){
+                    PareseURL pareseURL = new PareseURL();
+                    pareseURL.execute(URL);
                 }
             }
         });
-        loadPost();
-        adapter = new PostAdapter(listPost, getContext());
+        adapter = new PostAdapter(listPost, webArticle, getContext());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(dividerItemDecoration);
@@ -214,6 +257,7 @@ public class SocialFragment extends Fragment {
         loadPost();
     }
 
+    // load bài đăng theo ngày đăng
     public void loadPost(){
         db.child("Social").child("Post").addValueEventListener(new ValueEventListener() {
             @Override
@@ -239,6 +283,75 @@ public class SocialFragment extends Fragment {
                 Log.d(getTag(), error.getMessage());
             }
         });
+    }
+    // inner class
+    // AsyncTask<Params, Progress, Result>
+    //Những đối số nào không sử dụng trong quá trình thực thi tiến trình thì ta thay bằng Void.
+    /*
+      +) Params: Là giá trị ((biến) được truyền vào khi gọi thực thi tiến trình và nó sẽ được truyền vào doInBackground
+      +) Progress: Là giá trị (biến) dùng để update giao diện diện lúc tiến trình thực thi, biến này sẽ được truyền vào hàm onProgressUpdate.
+      +) Result: Là biến dùng để lưu trữ kết quả trả về sau khi tiến trình thực hiện xong.*/
+    private class PareseURL extends AsyncTask<String, Void, WebArticle> {
+        private ProgressDialog dialog = new ProgressDialog(SocialFragment.getSocialFragmentContext());
+        public PareseURL(){
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage("Đang tải...");
+            dialog.show();
+        }
+
+        @Override
+        protected WebArticle doInBackground(String... params) {
+            WebArticle webArticle = new WebArticle();
+            try {
+                Document  document = Jsoup.connect(params[0]).get();
+
+                // Lấy title
+                String title = document.title();
+                webArticle.setTitle(title);
+                // Lấy ảnh
+                /*Trong header của mỗi trang báo thường có tag meta có chứa attribute property="og:image"
+                * itemprop="thumbnailUrl"(option) dùng để chứa link thumbnail
+                * */
+                Elements elements = document.getElementsByTag("meta");
+                for(Element element: elements){
+                    String thumnail = element.attr("content");
+                    String property = element.attr("property");
+                    if(property.equals("og:image")){
+                        webArticle.setThumbnail(thumnail);
+                    }
+                }
+               return webArticle;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(WebArticle s) {
+            super.onPostExecute(s);
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+           Log.d("ABC", s.toString());
+
+            db.child("Social").child("Post").push().setValue(new Post(postId, content, s.getThumbnail(), null, URL, s.getTitle(), username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete( @NonNull Task<Void> task ) {
+                    myEditText.setText("");
+                    Toast.makeText(getContext(), "Lưu đường dẫn thành công", Toast.LENGTH_LONG);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure( @NonNull Exception e ) {
+                    Toast.makeText(getContext() ,e.getMessage() ,Toast.LENGTH_SHORT).show();
+                    Log.d("AB", e.getMessage());
+                }
+            });
+        }
     }
     public static Context getSocialFragmentContext(){
         return SocialFragment.context;

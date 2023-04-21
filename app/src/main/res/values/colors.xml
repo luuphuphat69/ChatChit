@@ -10,4 +10,5 @@
     <color name="grey">#E1DBDB</color>
     <color name="senderColor">#62CDFF</color>
     <color name="receiverColor">#F7F7F7</color>
+    <color name="linkColor"> #0000EE</color>
 </resources>
