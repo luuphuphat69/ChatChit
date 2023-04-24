@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -52,6 +53,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     WebArticle webArticle;
     Context context;
     Uri videoUri;
+
     DatabaseReference db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/")
                                            .getReference();
     public PostAdapter(ArrayList<Post> listPost, WebArticle webArticle, Context context) {
@@ -59,6 +61,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         this.context = context;
         this.webArticle = webArticle;
     }
+
 
     @NonNull
     @Override
@@ -81,11 +84,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.postContentImage.setVisibility(View.GONE);
             holder.postContentVideo.setVisibility(View.GONE);
         }
+        // postContentImage : link ảnh và ảnh
         else if(post.getPostContentImage() != null && post.getPostContentVideo() == null){
             if(post.getPostURL() != null){
+                String urlImg = post.getPostContentImage();
+
                 holder.URLtitle.setText(post.getPostURLTitle());
                 holder.postContent.setText(post.getPostContent());
                 holder.postContent.setVisibility(View.VISIBLE);
+                // Gạch chân link
                 SpannableString content = new SpannableString(post.getPostURL());
                 content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
                 holder.url.setText(content);
@@ -100,11 +107,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             context.startActivity(intent);
                         }catch (Exception e){
                             Toast.makeText(SocialFragment.getSocialFragmentContext(), e.getMessage() + ". Vui lòng tải Google Chrome", Toast.LENGTH_LONG);
-                            Log.d("link", e.getMessage());
+                            Log.d("openLink", e.getMessage());
                         }
                     }
                 });
-                String urlImg = post.getPostContentImage();
 
                 holder.URLtitle.setVisibility(View.VISIBLE);
                 holder.thumnails.setVisibility(View.VISIBLE);
@@ -166,6 +172,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 uploadLikes(post, likeAmount);
             }
         });
+
         holder.countLike.setText(String.valueOf(post.getAmountLike()));
     }
 
@@ -181,13 +188,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private VideoView postContentVideo;
         private TextView  url, URLtitle;
         private ImageView thumnails;
-        private CircleImageView userImage;
+        private CircleImageView userImg;
         public PostViewHolder( @NonNull View itemView ) {
             super(itemView);
             userName = itemView.findViewById(R.id.username);
             postContent = itemView.findViewById(R.id.postContent);
             postDatetime = itemView.findViewById(R.id.postDatetime);
-            userImage = itemView.findViewById(R.id.userImage);
+            userImg = itemView.findViewById(R.id.userImage);
             postContentImage = itemView.findViewById(R.id.postContentImage);
             postContentVideo = itemView.findViewById(R.id.postContentVideo);
             url = itemView.findViewById(R.id.url);
@@ -213,6 +220,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             }
             @Override
             public void onCancelled( @NonNull DatabaseError error ) {
+                Log.d("uploadLikes", error.getMessage());
             }
         });
     }

@@ -7,25 +7,25 @@
     android:gravity="center"
     tools:context=".login_signup.LoginSignup">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/chitchatImg"
-        android:src="@drawable/chitchat"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="20dp"
-        tools:ignore="MissingConstraints" />
+<!--    <ImageView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/chitchatImg"-->
+<!--        android:src="@drawable/chitchat"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        android:layout_marginBottom="20dp"-->
+<!--        tools:ignore="MissingConstraints" />-->
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:id="@+id/addUserImg"
-        app:layout_constraintTop_toBottomOf="@+id/chitchatImg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="20dp"
-        android:src="@drawable/ic_baseline_add_a_photo_24" />
+        android:src="@drawable/ic_baseline_add_a_photo_24"
+        tools:ignore="MissingConstraints" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -103,4 +103,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:textSize="17sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/remember"
+        app:layout_constraintTop_toBottomOf="@+id/signup"
+        android:textSize="18dp"
+        android:textStyle="italic"
+        android:text="Lưu ý khi đặt tên: "
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/nameRule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" - Không vi phạm quy định đặt tên trên ChatChit"
+        android:textSize="18dp"
+        android:textColor="@color/linkColor"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/remember"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/nameRule"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:text=" - Nên sử dụng tên thật giúp bạn bè dễ nhận ra bạn"
+        tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

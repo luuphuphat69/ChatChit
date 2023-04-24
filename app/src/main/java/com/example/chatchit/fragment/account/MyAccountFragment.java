@@ -109,5 +109,27 @@ public class MyAccountFragment extends Fragment {
                 launcher.launch(intent);
             }
         });
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference islandRef = storageReference.child("Profile Images/").child(auth.getCurrentUser().getPhotoUrl().toString());
+        try {
+            File localFile = File.createTempFile("images", "jpg");
+
+            islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    // Local temp file has been created
+                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getPath());
+                   userImage.setImageBitmap(bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -44,13 +45,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SignUpActivity extends AppCompatActivity{
     TextInputLayout signUpEmail, signUpPassword, signUpUsername, confirmPass;
+    TextView nameRule;
     Button signup;
     CircleImageView addUserImg;
     FirebaseAuth auth;
     Uri uri;
     String randomUUID;
     DatabaseReference db;
-
+    
     ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult( ActivityResult result ) {
@@ -87,6 +89,7 @@ public class SignUpActivity extends AppCompatActivity{
         signUpUsername = findViewById(R.id.signUpUsername);
         addUserImg = findViewById(R.id.addUserImg);
         confirmPass = findViewById(R.id.confirmPass);
+        nameRule = findViewById(R.id.nameRule);
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
@@ -122,7 +125,8 @@ public class SignUpActivity extends AppCompatActivity{
 
                                 // Set DisplayName cho user đăng ký
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(UserName).build();
+                                        .setDisplayName(UserName)
+                                        .setPhotoUri(Uri.parse(randomUUID)).build();
                                 FirebaseUser firebaseUser = auth.getCurrentUser();
                                 firebaseUser.updateProfile(profileUpdates);
 
@@ -139,6 +143,15 @@ public class SignUpActivity extends AppCompatActivity{
                 }
             }
         });
+
+        nameRule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick( View v ) {
+                Intent intent = new Intent(SignUpActivity.this, NameRuleActivity.class);
+                startActivity(intent);
+            }
+        });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
