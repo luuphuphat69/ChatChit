@@ -3,6 +3,7 @@ package com.example.chatchit.main;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,40 +40,19 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     FirebaseAuth auth = FirebaseAuth.getInstance();
-    DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-    ArrayList<User> Users = new ArrayList<>();
     ActionBar toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db.child("User").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange( @NonNull DataSnapshot snapshot ) {
-                for(DataSnapshot snapshot1: snapshot.getChildren()){
-                    for(DataSnapshot snapshot2: snapshot.getChildren()){
-                        User user = snapshot2.getValue(User.class);
-                        Users.add(user);
-                    }
-                }
-            }
-            @Override
-            public void onCancelled( @NonNull DatabaseError error ) {
-
-            }
-        });
-
-        // ath = FirebaseAuth.getInstance();
         bottomNavigationView = findViewById(R.id.bottomNav_main);
 
         toolbar = getSupportActionBar();
         toolbar.setTitle("Tin nhắn");
 
-
         // load UserFragment mặc định
         loadFragment(new UserFragment());
-
         /*
         * Thanh bottom navigate, chuyển người dùng đến fragment khác
         * */
@@ -136,5 +116,4 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }

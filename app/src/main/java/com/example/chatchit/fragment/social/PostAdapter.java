@@ -80,13 +80,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         StorageReference storageReference = FirebaseStorage.getInstance("gs://chatchit-81b07.appspot.com/").getReference();
 
-        if(post.getPostContentImage() == null && post.getPostContentVideo() == null){
-            holder.postContentImage.setVisibility(View.GONE);
-            holder.postContentVideo.setVisibility(View.GONE);
-        }
-        // postContentImage : link ảnh và ảnh
-        else if(post.getPostContentImage() != null && post.getPostContentVideo() == null){
-            if(post.getPostURL() != null){
+        switch (getPostContentType(post)){
+            case 0: // no image and video
+                holder.postContentImage.setVisibility(View.GONE);
+                holder.postContentVideo.setVisibility(View.GONE);
+            case 1: // image and no url
                 String urlImg = post.getPostContentImage();
 
                 holder.URLtitle.setText(post.getPostURLTitle());
@@ -106,7 +104,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             intent.setData(Uri.parse(post.getPostURL()));
                             context.startActivity(intent);
                         }catch (Exception e){
-                            Toast.makeText(SocialFragment.getSocialFragmentContext(), e.getMessage() + ". Vui lòng tải Google Chrome", Toast.LENGTH_LONG);
+                            Toast.makeText(SocialFragment.getSocialFragmentContext(), e.getMessage() + ". Vui lòng tải Google Chrome", Toast.LENGTH_LONG).show();
                             Log.d("openLink", e.getMessage());
                         }
                     }
@@ -116,7 +114,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 holder.thumnails.setVisibility(View.VISIBLE);
                 holder.url.setVisibility(View.VISIBLE);
                 Glide.with(context).load(urlImg).into(holder.thumnails);
-            }else{
+            case 2: // image and url
                 StorageReference photoRef = storageReference.child("Social Network/").child("Photos/").child(post.getPostContentImage());
                 photoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
@@ -134,37 +132,38 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     }
                 });
                 holder.postContentImage.setVisibility(View.VISIBLE);
-            }
-        } else if(post.getPostContentVideo() != null && post.getPostContentImage() == null){
-            StorageReference videoRef = storageReference.child("Social Network/").child("Videos/").child(post.getPostContentVideo());
-            try {
-                File localFile = File.createTempFile("video", "mp4");
-                videoRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                        // Local temp file has been created
-                        videoUri = Uri.parse(localFile.getAbsolutePath());
+            case 3: // video
+                StorageReference videoRef = storageReference.child("Social Network/").child("Videos/").child(post.getPostContentVideo());
+                try {
+                    File localFile = File.createTempFile("video", "mp4");
+                    videoRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                            // Local temp file has been created
+                            videoUri = Uri.parse(localFile.getAbsolutePath());
 
-                        holder.postContentVideo.setVisibility(View.VISIBLE);
-                        MediaController mediaController = new MediaController(SocialFragment.getSocialFragmentContext());
-                        mediaController.setAnchorView(holder.postContentVideo);
-                        holder.postContentVideo.setMediaController(mediaController);
-                        holder.postContentVideo.setVideoURI(videoUri);
-                        holder.postContentVideo.setFocusable(true);
-                        holder.postContentVideo.start();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        localFile.delete();
-                        Toast.makeText(context, exception.getMessage() + post.getPostContentImage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d("video", e.getMessage());
-            }
+                            holder.postContentVideo.setVisibility(View.VISIBLE);
+                            MediaController mediaController = new MediaController(SocialFragment.getSocialFragmentContext());
+                            mediaController.setAnchorView(holder.postContentVideo);
+                            holder.postContentVideo.setMediaController(mediaController);
+                            holder.postContentVideo.setVideoURI(videoUri);
+                            holder.postContentVideo.setFocusable(true);
+                            holder.postContentVideo.start();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            localFile.delete();
+                            Toast.makeText(context, exception.getMessage() + post.getPostContentImage(), Toast.LENGTH_SHORT).show();
+                            Log.d("getFileVideo", exception.getMessage());
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d("video", e.getMessage());
+                }
         }
+
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             int likeAmount = post.getAmountLike();
             @Override
@@ -174,7 +173,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 uploadLikes(post, likeAmount);
             }
         });
-
         holder.countLike.setText(String.valueOf(post.getAmountLike()));
     }
 
@@ -223,7 +221,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             @Override
             public void onCancelled( @NonNull DatabaseError error ) {
                 Log.d("uploadLikes", error.getMessage());
+                Toast.makeText(context ,error.getMessage() ,Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private int getPostContentType(Post post) {
+        if (post.getPostContentImage() == null && post.getPostContentVideo() == null) {
+            return 0;
+        } else if (post.getPostContentImage() != null && post.getPostContentVideo() == null && post.getPostURL() == null) {
+            return 1;
+        } else if (post.getPostContentImage() != null && post.getPostContentVideo() == null && post.getPostURL() != null) {
+            return 2;
+        }else if(post.getPostContentVideo() != null && post.getPostContentImage() == null){
+            return 3;
+        }
+        return -1;
     }
 }

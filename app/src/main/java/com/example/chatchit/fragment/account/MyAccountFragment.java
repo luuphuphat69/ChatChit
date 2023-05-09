@@ -52,7 +52,6 @@ public class MyAccountFragment extends Fragment {
     ImageView editUsername;
     CircleImageView userImage;
     TextView username, email;
-    DatabaseReference database = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
     ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -63,7 +62,6 @@ public class MyAccountFragment extends Fragment {
                 String UserName = result.getData().getStringExtra("name");
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                         .setDisplayName(UserName).build();
-
                 FirebaseUser firebaseUser = auth.getCurrentUser();
                 firebaseUser.updateProfile(profileUpdates);
                 username.setText(UserName);
@@ -96,7 +94,6 @@ public class MyAccountFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), EditInfoActivity.class);
                 intent.putExtra("name", username.getText().toString());
                 intent.putExtra("email", email.getText().toString());
-
                 launcher.launch(intent);
             }
         });
@@ -107,7 +104,6 @@ public class MyAccountFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), EditInfoActivity.class);
                 intent.putExtra("name", username.getText().toString());
                 intent.putExtra("email", email.getText().toString());
-
                 launcher.launch(intent);
             }
         });

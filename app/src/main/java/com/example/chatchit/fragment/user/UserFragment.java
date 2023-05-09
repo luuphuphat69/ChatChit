@@ -39,7 +39,6 @@ public class UserFragment extends Fragment implements IOnClickListener {
     FirebaseAuth ath;
     String currentUser;
     ImageView sortByAlphabet;
-    int click = 0;
     private DatabaseReference database;
 
     @Override
