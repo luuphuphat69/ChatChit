@@ -125,6 +125,8 @@ public class EditInfoActivity extends AppCompatActivity {
             }
             @Override
             public void onCancelled( @NonNull DatabaseError error ) {
+                Log.d("changeName", error.getMessage());
+                Toast.makeText(EditInfoActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -112,10 +113,45 @@ public class SignUpActivity extends AppCompatActivity{
                 String UserName = signUpUsername.getEditText().getText().toString();
                 String ConfirmPass = confirmPass.getEditText().getText().toString();
 
+                String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+                /* -- null check --*/
                 if(randomUUID == null){
                     Toast.makeText(SignUpActivity.this, "Chưa chọn ảnh", Toast.LENGTH_LONG).show();
                     recreate();
+                    return;
                 }
+                if(TextUtils.isEmpty(Email)){
+                    signUpEmail.setError("Email không được trống");
+                    return;
+                }
+                if(TextUtils.isEmpty(Password)){
+                    signUpPassword.setError("Mật khẩu không được trống");
+                    return;
+                }
+                if(TextUtils.isEmpty(UserName)){
+                    signUpUsername.setError("Tên tài khoản không được trống");
+                    return;
+                }
+                if(TextUtils.isEmpty(ConfirmPass)){
+                    confirmPass.setError("Xác nhận mật khẩu không để trống");
+                    return;
+                }
+                /* -- null check --*/
+                /* -- validate --*/
+                if(!Email.matches(emailRegex)){
+                    signUpEmail.setError("Email không hợp lệ");
+                    return;
+                }
+                if(Password.length() < 6){
+                    signUpPassword.setError("Mật khẩu chứa lớn hơn 6 ký tự");
+                    return;
+                }
+                if(!ConfirmPass.equals(Password)){
+                    confirmPass.setError("Mật khẩu không trùng khớp");
+                    return;
+                }
+                /* -- validate -- */
                 if(Password.equals(ConfirmPass) && randomUUID != null){
                     auth.createUserWithEmailAndPassword(Email, Password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -137,9 +173,6 @@ public class SignUpActivity extends AppCompatActivity{
                             }
                         }
                     });
-                }else if(!Password.equals(ConfirmPass) && randomUUID != null){
-                    Toast.makeText(SignUpActivity.this, "Mật khẩu không trùng khớp", Toast.LENGTH_LONG).show();
-                    recreate();
                 }
             }
         });
@@ -151,7 +184,6 @@ public class SignUpActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

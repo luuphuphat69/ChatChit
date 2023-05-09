@@ -51,16 +51,12 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
         switcher.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                if (nightMODE){
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    editor = sharedPreferences.edit();
-                    editor.putBoolean("night",false);
-                }
-                else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    editor = sharedPreferences.edit();
+                if (nightMODE) {
+                    editor.putBoolean("night", false);
+                } else {
                     editor.putBoolean("night", true);
                 }
+                AppCompatDelegate.setDefaultNightMode(nightMODE ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
                 editor.apply();
                 return false;
             }
@@ -70,6 +66,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
             @Override
             public boolean onPreferenceClick( @NonNull Preference preference ) {
                 String senderId = auth.getCurrentUser().getUid();
+                StringBuilder backupBuilder = new StringBuilder();
                 db.child("Messages").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange( @NonNull DataSnapshot snapshot ) {
@@ -77,9 +74,13 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
                             Message message = snap.getValue(Message.class);
                             if(senderId.equals(message.getSenderId()) || senderId.equals(message.getReceiverId())){
                                 if(message.getIsShown() == 0 || message.getIsShown() == 1){
-                                    backUpMess +=   " message: " + message.getUserMessage() + " content: " + message.getContentWebView()
-                                                  + " sender: " + senderId + " receiver: " + message.getReceiverId()
-                                                  + " time: " + message.getDatetime() + "\n";
+                                    backupBuilder.append(" message: ").append(message.getUserMessage())
+                                                 .append(" web content: ").append(message.getContentWebView())
+                                                 .append(" sender: ").append(senderId)
+                                                 .append(" receiver: ").append(message.getReceiverId())
+                                                 .append(" time: ").append(message.getDatetime())
+                                                 .append("\n");
+                                    backUpMess = backupBuilder.toString();
                                     writeFileOnInternalStorage(getContext(), "backup", backUpMess);
                                 }
                             }
@@ -87,6 +88,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
                     }
                     @Override
                     public void onCancelled( @NonNull DatabaseError error ) {
+                        Toast.makeText(getContext() ,error.getMessage() ,Toast.LENGTH_SHORT).show();
                         Log.d(getTag(), error.getMessage());
                     }
                 });
@@ -136,6 +138,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
             }
             @Override
             public void onCancelled( @NonNull DatabaseError error ) {
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
                 Log.d(getTag(), error.getMessage());
             }
         });
@@ -159,6 +162,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
             //Đóng stream writer
             writer.close();
         } catch (Exception e){
+            Log.d("writeFile", e.getMessage());
             e.printStackTrace();
         }
     }
