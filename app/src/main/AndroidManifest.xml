@@ -21,7 +21,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".NameRuleActivity"
+            android:name=".login_signup.NameRuleActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -61,8 +61,12 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <!--Disable hardware acceleration tại activity chứa fragment Social-->
+        <!--Err:Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 2314
+        (RenderThread), pid 2156-->
         <activity
             android:name=".main.MainActivity"
+            android:hardwareAccelerated="false"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -75,13 +79,5 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
-            android:name=".login_signup.NameRuleActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
     </application>
-
 </manifest>

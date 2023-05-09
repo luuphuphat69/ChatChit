@@ -56,6 +56,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -89,21 +90,8 @@ public class SocialFragment extends Fragment{
             if (result.getResultCode() == RESULT_OK) {
                 Intent data = result.getData();
                 uri = data.getData();
-                StorageReference storageRef = FirebaseStorage.getInstance("gs://chatchit-81b07.appspot.com/").getReference();
                 photosRandomUUID = UUID.randomUUID().toString();
-                StorageReference ref = storageRef.child("Social Network");
-                ref.child("Photos").child(photosRandomUUID).putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess( UploadTask.TaskSnapshot taskSnapshot ) {
-                        Toast.makeText(getContext() ,"Upload image successful" ,Toast.LENGTH_LONG).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure( @NonNull Exception e ) {
-                        Toast.makeText(getContext() ,e.getMessage() ,Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+                uploadFile(uri, "Photos", photosRandomUUID);
             }
         }
     });
@@ -114,20 +102,7 @@ public class SocialFragment extends Fragment{
                 Intent data = result.getData();
                 videoUri = data.getData();
                 videosRandomUUID = UUID.randomUUID().toString();
-                StorageReference storageRef = FirebaseStorage.getInstance("gs://chatchit-81b07.appspot.com/").getReference();
-                StorageReference ref = storageRef.child("Social Network");
-
-                ref.child("Videos").child(videosRandomUUID).putFile(videoUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess( UploadTask.TaskSnapshot taskSnapshot ) {
-                        Toast.makeText(getContext(),"Upload video successful",Toast.LENGTH_LONG).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure( @NonNull Exception e ) {
-                        Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
-                    }
-                });
+                uploadFile(videoUri, "Videos", videosRandomUUID);
             }
         }
     });
@@ -151,7 +126,6 @@ public class SocialFragment extends Fragment{
         ImageButton imagePicker = view.findViewById(R.id.ImagePicker);
         ImageButton videoPicker = view.findViewById(R.id.VideoPicker);
         ImageButton insertLink = view.findViewById(R.id.insertLink);
-
         // Inflate popup window
         insertLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,36 +186,32 @@ public class SocialFragment extends Fragment{
                 content  = myEditText.getText().toString();
                 username = auth.getCurrentUser().getDisplayName();
                 postDate  = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
-                if(photosRandomUUID == null && videosRandomUUID == null && URL == null){
-                    db.child("Social").child("Post").push().setValue(new Post(postId, content, null, null, null,null, username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete( @NonNull Task<Void> task ) {
-                            myEditText.setText("");
-                            MyEditText.setLink();
-                        }
-                    });
-                }else if(photosRandomUUID != null){
-                    db.child("Social").child("Post").push().setValue(new Post(postId, content, photosRandomUUID, null, null, null, username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete( @NonNull Task<Void> task ) {
-                            myEditText.setText("");
-                            photosRandomUUID = null;
-                            MyEditText.setLink();
-                        }
-                    });
-                }else if(videosRandomUUID != null){
-                    db.child("Social").child("Post").push().setValue(new Post(postId, content, null, videosRandomUUID,null, null, username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete( @NonNull Task<Void> task ) {
-                            myEditText.setText("");
-                            videosRandomUUID = null;
-                            MyEditText.setLink();
-                        }
-                    });
-                }else if(URL != null){
+
+                String photosRandomUUIDValues = null;
+                String videosRandomUUIDValues = null;
+
+                if(photosRandomUUID != null){
+                    photosRandomUUIDValues = photosRandomUUID;
+                }
+                if(videosRandomUUID != null){
+                    videosRandomUUIDValues = videosRandomUUID;
+                }
+                if(URL != null){
                     PareseURL pareseURL = new PareseURL();
                     pareseURL.execute(URL);
                 }
+
+                db.child("Social").child("Post").push().setValue(new Post(postId, content, photosRandomUUIDValues, videosRandomUUIDValues,null, null,
+                                username, auth.getUid(), postDate, 0 ))
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                myEditText.setText("");
+                                MyEditText.setLink();
+                                photosRandomUUID = null;
+                                videosRandomUUID = null;
+                            }
+                        });
             }
         });
         adapter = new PostAdapter(listPost, webArticle, getContext());
@@ -284,6 +254,23 @@ public class SocialFragment extends Fragment{
             }
         });
     }
+    public void uploadFile(Uri fileUri, String folder, String UUID){
+        StorageReference storageRef = FirebaseStorage.getInstance("gs://chatchit-81b07.appspot.com/").getReference();
+        StorageReference ref = storageRef.child("Social Network").child(folder).child(UUID);
+        ref.putFile(fileUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(getContext(), "Upload " + folder.toLowerCase() + " successful", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
     // inner class
     // AsyncTask<Params, Progress, Result>
     //Những đối số nào không sử dụng trong quá trình thực thi tiến trình thì ta thay bằng Void.
@@ -301,13 +288,11 @@ public class SocialFragment extends Fragment{
             dialog.setMessage("Đang tải...");
             dialog.show();
         }
-
         @Override
         protected WebArticle doInBackground(String... params) {
             WebArticle webArticle = new WebArticle();
             try {
                 Document  document = Jsoup.connect(params[0]).get();
-
                 // Lấy title
                 String title = document.title();
                 webArticle.setTitle(title);
@@ -336,8 +321,6 @@ public class SocialFragment extends Fragment{
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-           Log.d("ABC", s.toString());
-
             db.child("Social").child("Post").push().setValue(new Post(postId, content, s.getThumbnail(), null, URL, s.getTitle(), username, auth.getUid(), postDate, 0)).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete( @NonNull Task<Void> task ) {
@@ -348,7 +331,7 @@ public class SocialFragment extends Fragment{
                 @Override
                 public void onFailure( @NonNull Exception e ) {
                     Toast.makeText(getContext() ,e.getMessage() ,Toast.LENGTH_SHORT).show();
-                    Log.d("AB", e.getMessage());
+                    Log.d("PostLink", e.getMessage());
                 }
             });
         }

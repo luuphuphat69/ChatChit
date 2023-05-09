@@ -28,8 +28,10 @@ import com.bumptech.glide.Glide;
 import com.example.chatchit.R;
 import com.example.chatchit.fragment.user.User;
 import com.example.chatchit.fragment.user.UserAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -53,7 +55,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     WebArticle webArticle;
     Context context;
     Uri videoUri;
-
     DatabaseReference db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/")
                                            .getReference();
     public PostAdapter(ArrayList<Post> listPost, WebArticle webArticle, Context context) {
@@ -61,7 +62,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         this.context = context;
         this.webArticle = webArticle;
     }
-
 
     @NonNull
     @Override
@@ -117,50 +117,52 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 holder.url.setVisibility(View.VISIBLE);
                 Glide.with(context).load(urlImg).into(holder.thumnails);
             }else{
-                try {
-                    StorageReference photoRef = storageReference.child("Social Network/").child("Photos/").child(post.getPostContentImage());
-                    File localFile = File.createTempFile("images", "jpg");
-                    photoRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            // Local temp file has been created
-                            Bitmap bitmap = BitmapFactory.decodeFile(localFile.getPath());
-                            holder.postContentImage.setImageBitmap(bitmap);
-                            holder.postContentImage.setVisibility(View.VISIBLE);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(context, exception.getMessage() + post.getPostContentImage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                StorageReference photoRef = storageReference.child("Social Network/").child("Photos/").child(post.getPostContentImage());
+                photoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess( Uri uri ) {
+                        String url = uri.toString();
+                        Glide.with(context)
+                                .load(url)
+                                .into(holder.postContentImage);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure( @NonNull Exception e ) {
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.d("postImg", e.getMessage());
+                    }
+                });
+                holder.postContentImage.setVisibility(View.VISIBLE);
             }
         } else if(post.getPostContentVideo() != null && post.getPostContentImage() == null){
             StorageReference videoRef = storageReference.child("Social Network/").child("Videos/").child(post.getPostContentVideo());
             try {
-                File localFile = File.createTempFile("videos", "mp4");
+                File localFile = File.createTempFile("video", "mp4");
                 videoRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                         // Local temp file has been created
                         videoUri = Uri.parse(localFile.getAbsolutePath());
+
                         holder.postContentVideo.setVisibility(View.VISIBLE);
-                        holder.postContentVideo.setMediaController(new MediaController(SocialFragment.getSocialFragmentContext()));
+                        MediaController mediaController = new MediaController(SocialFragment.getSocialFragmentContext());
+                        mediaController.setAnchorView(holder.postContentVideo);
+                        holder.postContentVideo.setMediaController(mediaController);
                         holder.postContentVideo.setVideoURI(videoUri);
-                        holder.postContentVideo.requestFocus();
+                        holder.postContentVideo.setFocusable(true);
                         holder.postContentVideo.start();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
+                        localFile.delete();
                         Toast.makeText(context, exception.getMessage() + post.getPostContentImage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.d("video", e.getMessage());
             }
         }
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {

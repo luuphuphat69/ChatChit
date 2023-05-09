@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:id="@+id/messageMain">
+        <!-- User Info start -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,6 +29,8 @@
                 android:text="User"
                 android:textSize="17sp" />
         </LinearLayout>
+        <!-- User Info end -->
+        <!-- Message content start -->
         <TextView
             android:id="@+id/usermessage"
             android:layout_width="wrap_content"
@@ -46,5 +49,6 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:text="12/2/2023 15:34"/>
+        <!-- Message content end -->
     </LinearLayout>
 </LinearLayout>

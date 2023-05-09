@@ -77,10 +77,11 @@ public class UserFragment extends Fragment implements IOnClickListener {
         userrecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
 
         sortByAlphabet.setOnClickListener(new View.OnClickListener() {
+            private boolean isClicked = true;
             @Override
             public void onClick( View v ) {
-                click ++;
-                if(click % 2 != 0) {
+                isClicked = !isClicked;
+                if(isClicked == true) {
                     userAdapter.sortUserByAlphabet();
                 }else{
                     userAdapter.sortUserByAlphabetReverse();

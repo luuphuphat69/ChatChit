@@ -8,6 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+<!-- Post Info start -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,25 +36,29 @@
                 android:text="11/4/2003 10:05PM"/>
         </LinearLayout>
     </LinearLayout>
+<!-- Post Info end -->
+<!-- Post Content start -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/postContent"
         android:text="Hello, this is my first post"
         android:textSize="20dp"/>
-
+    <!-- Image view start -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:visibility="gone"
         android:id="@+id/postContentImage" />
-
+    <!-- Image view end -->
+    <!-- Video view start -->
     <VideoView
         android:id="@+id/postContentVideo"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:visibility="gone" />
-
+    <!-- Video view start -->
+    <!-- Web view start-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,7 +84,8 @@
             android:textStyle="bold"
             android:text="This is a title"/>
     </LinearLayout>
-
+    <!--Web view end-->
+    <!--Like view start-->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -100,5 +106,7 @@
             android:text="0"
             android:textSize="20dp" />
     </LinearLayout>
+    <!--Like view end-->
+<!-- Post Content end -->
 </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

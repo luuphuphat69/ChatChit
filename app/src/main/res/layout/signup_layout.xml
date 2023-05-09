@@ -7,16 +7,7 @@
     android:gravity="center"
     tools:context=".login_signup.LoginSignup">
 
-<!--    <ImageView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/chitchatImg"-->
-<!--        android:src="@drawable/chitchat"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        android:layout_marginBottom="20dp"-->
-<!--        tools:ignore="MissingConstraints" />-->
-
+    <!-- Input start -->
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
@@ -90,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
-
+    <!-- Input end -->
     <Button
         android:id="@+id/signup"
         android:layout_width="150dp"

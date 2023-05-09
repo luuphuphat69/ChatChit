@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="50dp"
         android:orientation="vertical">
+        <!-- Photo start -->
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_gravity="center"
@@ -27,7 +28,8 @@
                 android:layout_alignBottom="@+id/userImage"
                 android:src="@drawable/ic_baseline_edit_24"/>
         </RelativeLayout>
-
+        <!-- Photo end -->
+        <!-- Input start -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -48,6 +50,7 @@
                 android:inputType="none"
                 android:id="@+id/useremail"/>
         </com.google.android.material.textfield.TextInputLayout>
+        <!-- Input end -->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.chatchit.R;
 import com.example.chatchit.fragment.user.User;
 import com.example.chatchit.fragment.user.UserAdapter;
@@ -112,24 +114,21 @@ public class MyAccountFragment extends Fragment {
 
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference islandRef = storageReference.child("Profile Images/").child(auth.getCurrentUser().getPhotoUrl().toString());
-        try {
-            File localFile = File.createTempFile("images", "jpg");
 
-            islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    // Local temp file has been created
-                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getPath());
-                   userImage.setImageBitmap(bitmap);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        islandRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess( Uri uri ) {
+                String url = uri.toString();
+                Glide.with(getContext())
+                        .load(url)
+                        .into(userImage);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure( @NonNull Exception e ) {
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.d("userImg", e.getMessage());
+            }
+        });
     }
 }

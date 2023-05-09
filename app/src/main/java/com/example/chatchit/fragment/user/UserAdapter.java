@@ -1,16 +1,11 @@
 package com.example.chatchit.fragment.user;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,10 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.chatchit.IOnClickListener;
 import com.example.chatchit.R;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -68,25 +61,22 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         * */
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference islandRef = storageReference.child("Profile Images/").child(user.getUserImg());
-        try {
-            File localFile = File.createTempFile("images", "jpg");
 
-            islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+        islandRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                // Local temp file has been created
-                Bitmap bitmap = BitmapFactory.decodeFile(localFile.getPath());
-                holder.userImg.setImageBitmap(bitmap);
+            public void onSuccess( Uri uri ) {
+                String url = uri.toString();
+                Glide.with(context)
+                        .load(url)
+                        .into(holder.userImg);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(context, exception.getMessage() + user.getUserImg(), Toast.LENGTH_SHORT).show();
+            public void onFailure( @NonNull Exception e ) {
+                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.d("userImg", e.getMessage());
             }
         });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

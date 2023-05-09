@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
+        <!-- Input start -->
         <com.example.chatchit.MyEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,6 +46,7 @@
             android:src="@drawable/ic_baseline_add_link_24"
             app:layout_constraintTop_toBottomOf="@+id/postEditText"
             app:layout_constraintStart_toEndOf="@+id/VideoPicker"/>
+        <!-- Input end -->
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

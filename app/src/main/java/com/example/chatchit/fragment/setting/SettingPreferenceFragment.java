@@ -154,6 +154,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
             // Thêm nội dung vào cuối file
             writer.append(sBody);
             // Xoá hết dữ liệu trong buffer của stream writter trước khi load data mới vào
+            // Đảm bảo dữ liệu được ghi vào hết trước khi đóng file
             writer.flush();
             //Đóng stream writer
             writer.close();
