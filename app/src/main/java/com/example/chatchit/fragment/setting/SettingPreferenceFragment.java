@@ -51,12 +51,16 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat{
         switcher.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                if (nightMODE) {
-                    editor.putBoolean("night", false);
-                } else {
+                if (nightMODE){
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    editor = sharedPreferences.edit();
+                    editor.putBoolean("night",false);
+                }
+                else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    editor = sharedPreferences.edit();
                     editor.putBoolean("night", true);
                 }
-                AppCompatDelegate.setDefaultNightMode(nightMODE ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
                 editor.apply();
                 return false;
             }

@@ -84,7 +84,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             case 0: // no image and video
                 holder.postContentImage.setVisibility(View.GONE);
                 holder.postContentVideo.setVisibility(View.GONE);
+                break;
             case 1: // image and no url
+            StorageReference photoRef = storageReference.child("Social Network/").child("Photos/").child(post.getPostContentImage());
+            photoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess( Uri uri ) {
+                    String url = uri.toString();
+                    Glide.with(context)
+                            .load(url)
+                            .into(holder.postContentImage);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure( @NonNull Exception e ) {
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.d("postImg", e.getMessage());
+                }
+            });
+            holder.postContentImage.setVisibility(View.VISIBLE);
+            break;
+            case 2: // image and url
                 String urlImg = post.getPostContentImage();
 
                 holder.URLtitle.setText(post.getPostURLTitle());
@@ -114,24 +134,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 holder.thumnails.setVisibility(View.VISIBLE);
                 holder.url.setVisibility(View.VISIBLE);
                 Glide.with(context).load(urlImg).into(holder.thumnails);
-            case 2: // image and url
-                StorageReference photoRef = storageReference.child("Social Network/").child("Photos/").child(post.getPostContentImage());
-                photoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess( Uri uri ) {
-                        String url = uri.toString();
-                        Glide.with(context)
-                                .load(url)
-                                .into(holder.postContentImage);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure( @NonNull Exception e ) {
-                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.d("postImg", e.getMessage());
-                    }
-                });
-                holder.postContentImage.setVisibility(View.VISIBLE);
+                break;
             case 3: // video
                 StorageReference videoRef = storageReference.child("Social Network/").child("Videos/").child(post.getPostContentVideo());
                 try {
@@ -162,6 +165,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     e.printStackTrace();
                     Log.d("video", e.getMessage());
                 }
+                break;
         }
 
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
