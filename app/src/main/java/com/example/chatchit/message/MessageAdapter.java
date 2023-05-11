@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.chatchit.MyEditText;
 import com.example.chatchit.R;
 import com.example.chatchit.fragment.user.User;
@@ -54,6 +56,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private FirebaseAuth auth;
     private DatabaseReference db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();;
     private Context context;
+
     public MessageAdapter(ArrayList<Message> Messages, Context context){
         this.Messages = Messages;
         this.context = context;
@@ -131,8 +134,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         private TextView username, message, datetime;
         private LinearLayout messageRowLayout;
         private WebView userContentWebView;
+        private ImageView userImage;
         public MessageViewHolders(@NonNull View itemView){
             super(itemView);
+            userImage = itemView.findViewById(R.id.message_UserImg);
             username = itemView.findViewById(R.id.username);
             message = itemView.findViewById(R.id.usermessage);
             datetime = itemView.findViewById(R.id.message_datetime);
