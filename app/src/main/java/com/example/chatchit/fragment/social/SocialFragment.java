@@ -199,6 +199,7 @@ public class SocialFragment extends Fragment{
                 if(URL != null){
                     PareseURL pareseURL = new PareseURL();
                     pareseURL.execute(URL);
+                    return;
                 }
 
                 db.child("Social").child("Post").push().setValue(new Post(postId, content, photosRandomUUIDValues, videosRandomUUIDValues,null, null,

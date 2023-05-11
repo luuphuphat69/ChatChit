@@ -81,7 +81,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         StorageReference storageReference = FirebaseStorage.getInstance("gs://chatchit-81b07.appspot.com/").getReference();
 
         switch (getPostContentType(post)){
-            case 0: // no image and video
+            case 0: // no image, video and link
                 holder.postContentImage.setVisibility(View.GONE);
                 holder.postContentVideo.setVisibility(View.GONE);
                 break;
@@ -230,7 +230,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
     }
     private int getPostContentType(Post post) {
-        if (post.getPostContentImage() == null && post.getPostContentVideo() == null) {
+        if (post.getPostContentImage() == null && post.getPostContentVideo() == null && post.getPostURL() == null) {
             return 0;
         } else if (post.getPostContentImage() != null && post.getPostContentVideo() == null && post.getPostURL() == null) {
             return 1;
