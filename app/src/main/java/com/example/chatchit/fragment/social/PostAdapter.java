@@ -52,15 +52,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     ArrayList<Post> listPost;
-    WebArticle webArticle;
     Context context;
     Uri videoUri;
     DatabaseReference db = FirebaseDatabase.getInstance("https://chatchit-81b07-default-rtdb.asia-southeast1.firebasedatabase.app/")
                                            .getReference();
-    public PostAdapter(ArrayList<Post> listPost, WebArticle webArticle, Context context) {
+    public PostAdapter(ArrayList<Post> listPost, Context context) {
         this.listPost = listPost;
         this.context = context;
-        this.webArticle = webArticle;
     }
 
     @NonNull

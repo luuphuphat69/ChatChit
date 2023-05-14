@@ -56,7 +56,7 @@ public class MyEditText extends androidx.appcompat.widget.AppCompatEditText {
 
                             //Uri linkUri = inputContentInfo.getContentUri();
                             Uri linkUri = inputContentInfo.getLinkUri();
-                            LinkUri = (linkUri != null ? linkUri.toString() : "null");
+                            LinkUri = (linkUri != null ? linkUri.toString() : null);
                             return true;  // return true if succeeded
                         }
                     };

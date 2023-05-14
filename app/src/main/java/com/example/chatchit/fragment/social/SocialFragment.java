@@ -74,7 +74,6 @@ public class SocialFragment extends Fragment{
     String URL;
     RecyclerView recyclerView;
     PostAdapter adapter;
-    WebArticle webArticle;
 
     MyEditText myEditText;
     String postId;
@@ -215,7 +214,7 @@ public class SocialFragment extends Fragment{
                         });
             }
         });
-        adapter = new PostAdapter(listPost, webArticle, getContext());
+        adapter = new PostAdapter(listPost, getContext());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(dividerItemDecoration);
